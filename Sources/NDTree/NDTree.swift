@@ -5,6 +5,8 @@
 //  Created by li3zhen1 on 10/14/23.
 //
 
+import WithSpecializedGeneric
+
 /// The data structure carried by a node of NDTree
 /// It receives notifications when a node is added or removed on a node, regardless of whether the node is internal or leaf.
 /// It is designed to calculate properties like a box's center of mass.

@@ -9,7 +9,7 @@
 import NDTree
 import simd
 
-struct MaxRadiusTreeDelegate2D<NodeID>: QuadtreeDelegate where NodeID: Hashable {
+struct MaxRadiusTreeDelegate2D<NodeID>: KDTreeDelegate where NodeID: Hashable {
 
     public typealias V = simd_double2
 

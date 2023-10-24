@@ -15,7 +15,7 @@ enum ManyBodyForce2DError: Error {
     case buildQuadTreeBeforeSimulationInitialized
 }
 
-struct MassQuadtreeDelegate2D<NodeID>: QuadtreeDelegate where NodeID: Hashable {
+struct MassQuadtreeDelegate2D<NodeID>: KDTreeDelegate where NodeID: Hashable {
 
     public var accumulatedMass: Double = .zero
     public var accumulatedCount: Int = 0
