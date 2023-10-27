@@ -6,7 +6,7 @@
 //
 import NDTree
 
-struct MaxRadiusTreeDelegate<NodeID, V>: NDTreeDelegate where NodeID: Hashable, V: VectorLike {
+struct MaxRadiusTreeDelegate<NodeID, V>: NDTreeDelegate&KDTreeDelegate where NodeID: Hashable, V: VectorLike {
 
     public var maxNodeRadius: V.Scalar
 

@@ -34,9 +34,7 @@ public protocol KDTreeDelegate {
 }
 
 extension KDTree {
-    
-    
-    
+
     //
     //  GenericTree.swift
     //
@@ -44,14 +42,14 @@ extension KDTree {
     //  Created by li3zhen1 on 10/14/23.
     //
 
-    /// A node in GenericTree
-    /// - Note: `GenericTree` is a generic type that can be used in any dimension.
-    ///        `GenericTree` is a reference type.
+    // A node in GenericTree
+    // - Note: `GenericTree` is a generic type that can be used in any dimension.
+    //         `GenericTree` is a reference type.
     @WithSpecializedGenerics(
         """
         typealias QuadtreeDouble<D> = GenericTree<simd_double2, D>
-        // typealias QuadtreeFloat<D> = GenericTree<simd_float2, D>
-        // typealias OctreeDouble<D> = GenericTree<simd_double3, D>
+        typealias QuadtreeFloat<D> = GenericTree<simd_float2, D>
+        typealias OctreeDouble<D> = GenericTree<simd_double3, D>
         typealias OctreeFloat<D> = GenericTree<simd_float3, D>
         """
     )
@@ -130,7 +128,10 @@ extension KDTree {
                     nodePosition = point
                     return
                 } else if nodePosition == point
-                    || nodePosition!.distanceSquared(to: point) < clusterDistanceSquared
+                    || #ReplaceWhenSpecializing(
+                        nodePosition!.distanceSquared(to: point),
+                        "simd_distance_squared(nodePosition!, point)"
+                    ) < clusterDistanceSquared
                 {
                     nodeIndices.append(nodeIndex)
                     return
@@ -317,7 +318,6 @@ extension KDTree {
     }
 
 }
-
 
 public typealias Octree = KDTree.OctreeFloat
 public typealias Quadtree = KDTree.QuadtreeDouble
