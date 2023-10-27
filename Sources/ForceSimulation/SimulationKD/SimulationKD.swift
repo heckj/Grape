@@ -11,6 +11,7 @@ enum SimulationKDError: Error {
     case subscriptionToNonexistentNode
 }
 
+
 /// An N-Dimensional force simulation.
 public final class SimulationKD<NodeID, V>
 where NodeID: Hashable, V: VectorLike, V.Scalar : SimulatableFloatingPoint {

@@ -14,7 +14,7 @@
 public protocol VectorLike: CustomStringConvertible, Decodable, Encodable, ExpressibleByArrayLiteral, Hashable {
     
     
-    associatedtype Scalar: FloatingPoint, Decodable, Encodable, Hashable, CustomDebugStringConvertible
+    associatedtype Scalar: FloatingPoint & CustomDebugStringConvertible
     
     /// The length of the vector squared.
     /// This property should be implemented even if you are using `simd`.

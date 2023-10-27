@@ -13,7 +13,7 @@ enum ManyBodyForce3DError: Error {
     case buildQuadTreeBeforeSimulationInitialized
 }
 
-struct MassQuadtreeDelegate3D<NodeID>: OctreeDelegate where NodeID: Hashable {
+struct MassQuadtreeDelegate3D<NodeID>: KDTreeDelegate where NodeID: Hashable {
 
     public typealias V = simd_float3
 

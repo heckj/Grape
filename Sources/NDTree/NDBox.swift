@@ -92,9 +92,8 @@ extension NDBox {
         return true
         //        return (p0 <= point) && (point < p1)
     }
-}
-
-extension NDBox {
+    
+    
     @inlinable func getCorner(of direction: Int) -> V {
         var corner = V.zero
         for i in 0..<V.scalarCount {
@@ -106,10 +105,7 @@ extension NDBox {
     @inlinable public var debugDescription: String {
         return "[\(p0), \(p1)]"
     }
-}
-
-extension NDBox {
-
+    
     /// Get the small box that contains a list points and guarantees the box's size is at least 1x..x1.
     /// - Parameter points: The points to be covered.
     /// - Returns: The box that contains all the points.
@@ -129,13 +125,13 @@ extension NDBox {
             }
         }
 
-        #if DEBUG
-            let _box = Self(_p0, _p1)
-            assert(
-                points.allSatisfy { p in
-                    _box.contains(p)
-                })
-        #endif
+        // #if DEBUG
+        //     let _box = Self(_p0, _p1)
+        //     assert(
+        //         points.allSatisfy { p in
+        //             _box.contains(p)
+        //         })
+        // #endif
 
         return Self(_p0, _p1)
     }

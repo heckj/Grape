@@ -34,6 +34,9 @@ public protocol KDTreeDelegate {
 }
 
 extension KDTree {
+    
+    
+    
     //
     //  GenericTree.swift
     //
@@ -46,8 +49,10 @@ extension KDTree {
     ///        `GenericTree` is a reference type.
     @WithSpecializedGenerics(
         """
-        typealias Quadtree<D> = GenericTree<simd_double2, D>
-        typealias Octree<D> = GenericTree<simd_float3, D> where D: OctreeDelegate
+        typealias QuadtreeDouble<D> = GenericTree<simd_double2, D>
+        // typealias QuadtreeFloat<D> = GenericTree<simd_float2, D>
+        // typealias OctreeDouble<D> = GenericTree<simd_double3, D>
+        typealias OctreeFloat<D> = GenericTree<simd_float3, D>
         """
     )
     public final class GenericTree<V, D> where V: VectorLike, D: KDTreeDelegate, D.V == V {
@@ -194,7 +199,6 @@ extension KDTree {
             let copiedCurrentNode = shallowCopy()
             var spawned = GenericTree<V, D>.spawnChildren(
                 newRootBox,
-                //            GenericTree<V, D>.directionCount,
                 clusterDistance,
                 /*&*/delegate
             )
@@ -313,3 +317,9 @@ extension KDTree {
     }
 
 }
+
+
+public typealias Octree = KDTree.OctreeFloat
+public typealias Quadtree = KDTree.QuadtreeDouble
+public typealias NDTreeDelegate = KDTreeDelegate
+public typealias NDTree = KDTree.GenericTree
