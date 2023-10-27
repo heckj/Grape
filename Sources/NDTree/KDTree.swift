@@ -44,7 +44,12 @@ extension KDTree {
     /// A node in GenericTree
     /// - Note: `GenericTree` is a generic type that can be used in any dimension.
     ///        `GenericTree` is a reference type.
-    @WithSpecializedGeneric(namedAs: "Quadtree", specializing: "V", to: simd_double2)
+    @WithSpecializedGenerics(
+        """
+        typealias Quadtree<D> = GenericTree<simd_double2, D>
+        typealias Octree<D> = GenericTree<simd_float3, D> where D: OctreeDelegate
+        """
+    )
     public final class GenericTree<V, D> where V: VectorLike, D: KDTreeDelegate, D.V == V {
 
         public typealias NodeIndex = D.NodeID
