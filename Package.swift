@@ -30,7 +30,7 @@ let package = Package(
         // other dependencies
         .package(url: "https://github.com/apple/swift-docc-plugin", exact: "1.0.0"),
 
-        .package(url: "https://github.com/li3zhen1/WithSpecializedGeneric.git", exact: "0.1.3")
+        .package(url: "https://github.com/li3zhen1/WithSpecializedGeneric.git", exact: "0.1.4")
     ],
 
     targets: [

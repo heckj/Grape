@@ -13,44 +13,82 @@ import XCTest
 
 final class MiserableGraphTest: XCTestCase {
 
-//    func test_Generic_2d() {
-//        let data = getData()
-//
-//        let sim = SimulationKD<String, simd_double2>(
-//            nodeIds: data.nodes.map { n in
-//                n.id
-//            })
-//
-//        let linkForce = sim.createLinkForce(
-//            data.links.map({ l in
-//                (l.source, l.target)
-//            }))
-//        let manybodyForce = sim.createManyBodyForce(strength: -30)
-//
-//        let centerForce = sim.createCenterForce(center: .zero)
-//        let collideForce = sim.createCollideForce(radius: .constant(5))
-//
-//        //        for _ in 0..<120{
-//        //            sim.tick()
-//        //        }
-//        //
-//        ////        sim.tick()
-//        //
-//        //        for _ in 0..<120{
-//        //            sim.tick()
-//        //        }
-//
-//        measure {
-//            for i in 0..<120 {
-//                sim.tick()
-////                print(i)
-//            }
-//        }
-//        sim.tick()
-//        //        print(sim.simulationNodes)
-//
-//    }
+    func test_Generic_2d() {
+        let data = getData()
+
+        let sim = SimulationKD<String, simd_double2>(
+            nodeIds: data.nodes.map { n in
+                n.id
+            })
+
+        let linkForce = sim.createLinkForce(
+            data.links.map({ l in
+                (l.source, l.target)
+            }))
+        let manybodyForce = sim.createManyBodyForce(strength: -30)
+
+        let centerForce = sim.createCenterForce(center: .zero)
+        let collideForce = sim.createCollideForce(radius: .constant(5))
+
+        //        for _ in 0..<120{
+        //            sim.tick()
+        //        }
+        //
+        ////        sim.tick()
+        //
+        //        for _ in 0..<120{
+        //            sim.tick()
+        //        }
+
+        measure {
+            for i in 0..<120 {
+                sim.tick()
+//                print(i)
+            }
+        }
+        sim.tick()
+        //        print(sim.simulationNodes)
+
+    }
     
+
+    func test_MacroInlined_2d() {
+        let data = getData()
+
+        let sim = Simulation.Double2D(
+            nodeIds: data.nodes.map { n in
+                n.id
+            })
+
+         let linkForce = sim.createLinkForce(
+             data.links.map({ l in
+                 (l.source, l.target)
+             }))
+         let manybodyForce = sim.createManyBodyForce(strength: -30)
+
+         let centerForce = sim.createCenterForce(center: .zero)
+         let collideForce = sim.createCollideForce(radius: .constant(5))
+
+        //        for _ in 0..<120{
+        //            sim.tick()
+        //        }
+        //
+        ////        sim.tick()
+        //
+        //        for _ in 0..<120{
+        //            sim.tick()
+        //        }
+
+        measure {
+            for i in 0..<120 {
+                sim.tick()
+//                print(i)
+            }
+        }
+        sim.tick()
+        //        print(sim.simulationNodes)
+
+    }
 
     func test_Inlined_2d() {
         let data = getData()

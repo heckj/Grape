@@ -16,13 +16,37 @@ extension SimulationKD {
     /// The complexity is `O(e)`, where `e` is the number of links.
     /// See [Link Force - D3](https://d3js.org/d3-force/link).
     final public class LinkForce: ForceLike
-    where NodeID: Hashable, V: VectorLike, V.Scalar : SimulatableFloatingPoint {
+    where NodeID: Hashable, V: VectorLike, V.Scalar: SimulatableFloatingPoint {
 
         ///
         public enum LinkStiffness {
             case constant(V.Scalar)
             case varied((EdgeID<NodeID>, LinkLookup<NodeID>) -> V.Scalar)
             case weightedByDegree(k: (EdgeID<NodeID>, LinkLookup<NodeID>) -> V.Scalar)
+
+            func calculated(
+                for links: [EdgeID<NodeID>],
+                connectionLookupTable lookup: SimulationKD.LinkForce.LinkLookup<NodeID>
+            ) -> [V.Scalar] {
+                switch self {
+                case .constant(let value):
+                    return links.map { _ in value }
+                case .varied(let f):
+                    return links.map { link in
+                        f(link, lookup)
+                    }
+                case .weightedByDegree(let k):
+                    return links.map { link in
+                        k(link, lookup)
+                            / V.Scalar(
+                                min(
+                                    lookup.count[link.source, default: 0],
+                                    lookup.count[link.target, default: 0]
+                                )
+                            )
+                    }
+                }
+            }
         }
         var linkStiffness: LinkStiffness
         var calculatedStiffness: [V.Scalar] = []
@@ -32,6 +56,20 @@ extension SimulationKD {
         public enum LinkLength {
             case constant(LengthScalar)
             case varied((EdgeID<NodeID>, LinkLookup<NodeID>) -> LengthScalar)
+
+            func calculated(
+                for links: [EdgeID<NodeID>],
+                connectionLookupTable: SimulationKD.LinkForce.LinkLookup<NodeID>
+            ) -> [V.Scalar] {
+                switch self {
+                case .constant(let value):
+                    return links.map { _ in value }
+                case .varied(let f):
+                    return links.map { link in
+                        f(link, connectionLookupTable)
+                    }
+                }
+            }
         }
         var linkLength: LinkLength
         var calculatedLength: [LengthScalar] = []
@@ -78,6 +116,19 @@ extension SimulationKD {
             let sources: [_NodeID: [_NodeID]]
             let targets: [_NodeID: [_NodeID]]
             let count: [_NodeID: Int]
+
+            static func buildFromLinks(_ links: [EdgeID<_NodeID>]) -> Self {
+                var sources: [_NodeID: [_NodeID]] = [:]
+                var targets: [_NodeID: [_NodeID]] = [:]
+                var count: [_NodeID: Int] = [:]
+                for link in links {
+                    sources[link.source, default: []].append(link.target)
+                    targets[link.target, default: []].append(link.source)
+                    count[link.source, default: 0] += 1
+                    count[link.target, default: 0] += 1
+                }
+                return Self(sources: sources, targets: targets, count: count)
+            }
         }
         private var lookup = LinkLookup<Int>(sources: [:], targets: [:], count: [:])
 
@@ -183,58 +234,13 @@ extension SimulationKD {
 }
 
 extension SimulationKD.LinkForce.LinkLookup {
-    static func buildFromLinks(_ links: [EdgeID<_NodeID>]) -> Self {
-        var sources: [_NodeID: [_NodeID]] = [:]
-        var targets: [_NodeID: [_NodeID]] = [:]
-        var count: [_NodeID: Int] = [:]
-        for link in links {
-            sources[link.source, default: []].append(link.target)
-            targets[link.target, default: []].append(link.source)
-            count[link.source, default: 0] += 1
-            count[link.target, default: 0] += 1
-        }
-        return Self(sources: sources, targets: targets, count: count)
-    }
+
 }
 
 extension SimulationKD.LinkForce.LinkLength {
-    func calculated(
-        for links: [EdgeID<NodeID>],
-        connectionLookupTable: SimulationKD.LinkForce.LinkLookup<NodeID>
-    ) -> [V.Scalar] {
-        switch self {
-        case .constant(let value):
-            return links.map { _ in value }
-        case .varied(let f):
-            return links.map { link in
-                f(link, connectionLookupTable)
-            }
-        }
-    }
+
 }
 
 extension SimulationKD.LinkForce.LinkStiffness {
-    func calculated(
-        for links: [EdgeID<NodeID>],
-        connectionLookupTable lookup: SimulationKD.LinkForce.LinkLookup<NodeID>
-    ) -> [V.Scalar] {
-        switch self {
-        case .constant(let value):
-            return links.map { _ in value }
-        case .varied(let f):
-            return links.map { link in
-                f(link, lookup)
-            }
-        case .weightedByDegree(let k):
-            return links.map { link in
-                k(link, lookup)
-                    / V.Scalar(
-                        min(
-                            lookup.count[link.source, default: 0],
-                            lookup.count[link.target, default: 0]
-                        )
-                    )
-            }
-        }
-    }
+
 }

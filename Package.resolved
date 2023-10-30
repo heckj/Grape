@@ -23,8 +23,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/li3zhen1/WithSpecializedGeneric.git",
       "state" : {
-        "revision" : "67eaebd59804f2be38362fa7cf560abf4acf8968",
-        "version" : "0.1.3"
+        "revision" : "f4dd53892a50e68e5cee66908e20dfbc6e788e46",
+        "version" : "0.1.4"
       }
     }
   ],

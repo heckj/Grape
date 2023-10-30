@@ -135,25 +135,6 @@ extension SimulationKD {
             }
         }
 
-        //    private func getCoveringBox() throws -> NDBox<V> {
-        //        guard let simulation else { throw ManyBodyForceError.buildQuadTreeBeforeSimulationInitialized }
-        //        var _p0 = simulation.nodes[0].position
-        //        var _p1 = simulation.nodes[0].position
-        //
-        //        for p in simulation.nodes {
-        //            for i in 0..<V.scalarCount {
-        //                if p.position[i] < _p0[i] {
-        //                    _p0[i] = p.position[i]
-        //                }
-        //                if p.position[i] >= _p1[i] {
-        //                    _p1[i] = p.position[i] + 1
-        //                }
-        //            }
-        //        }
-        //        return NDBox(_p0, _p1)
-        //
-        //    }
-
         func calculateForce(alpha: V.Scalar) throws {
 
             guard let sim = self.simulation else {
@@ -191,55 +172,6 @@ extension SimulationKD {
                 var f = V.zero
                 tree.visit { t in
 
-                    //                guard t.delegate.accumulatedCount > 0 else { return false }
-                    //
-                    //                let centroid = t.delegate.accumulatedMassWeightedPositions / t.delegate.accumulatedMass
-                    //                let vec = centroid - sim.nodePositions[i]
-                    //
-                    //                var distanceSquared = vec.jiggled().lengthSquared()
-                    //
-                    //                /// too far away, omit
-                    //                guard distanceSquared < self.distanceMax2 else { return false }
-                    //
-                    //
-                    //
-                    //                /// too close, enlarge distance
-                    //                if distanceSquared < self.distanceMin2 {
-                    //                    distanceSquared = (self.distanceMin2 * distanceSquared).squareRoot()
-                    //                }
-                    //
-                    //
-                    //                if t.nodePosition != nil {
-                    //
-                    //                    /// filled leaf
-                    //                    if !t.nodeIndices.contains(i) {
-                    //                        let k: V.Scalar = self.strength * alpha * t.delegate.accumulatedMass / distanceSquared / (distanceSquared).squareRoot()
-                    //                        forces[i] += vec * k
-                    //                    }
-                    //
-                    //                    return false
-                    //
-                    //                }
-                    //                else if t.children != nil {
-                    //
-                    //                    let boxWidth = (t.box.p1 - t.box.p1)[0]
-                    //
-                    //                    /// internal, guard in 180 guarantees we have nodes here
-                    //                    if distanceSquared * self.theta2 > boxWidth * boxWidth {
-                    //                        // far enough
-                    //                        let k: V.Scalar = self.strength * alpha * t.delegate.accumulatedMass / distanceSquared / (distanceSquared).squareRoot()
-                    //                        forces[i] += vec * k
-                    //                        return false
-                    //                    }
-                    //                    else {
-                    //                        return true
-                    //                    }
-                    //                }
-                    //                else {
-                    //                    // empty leaf
-                    //                    return false
-                    //                }
-
                     guard t.delegate.accumulatedCount > 0 else { return false }
                     let centroid =
                         t.delegate.accumulatedMassWeightedPositions / t.delegate.accumulatedMass
@@ -272,14 +204,7 @@ extension SimulationKD {
                     }
 
                     if t.isFilledLeaf {
-
-                        //                    for j in t.nodeIndices {
-                        //                        if j != i {
-                        //                            let k: V.Scalar =
-                        //                            self.strength * alpha * self.precalculatedMass[j] / distanceSquared / distanceSquared.squareRoot()
-                        //                            f += vec * k
-                        //                        }
-                        //                    }
+                        
                         if t.nodeIndices.contains(i) { return false }
 
                         let massAcc = t.delegate.accumulatedMass
@@ -293,7 +218,7 @@ extension SimulationKD {
                 }
                 forces[i] = f
             }
-            //        return forces
+            
         }
 
     }
