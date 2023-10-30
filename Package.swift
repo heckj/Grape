@@ -6,7 +6,7 @@ import PackageDescription
 let package = Package(
     name: "Grape",
     platforms: [
-        .macOS(.v11), 
+        .macOS(.v11),
         .iOS(.v14),
         .watchOS(.v7),
     ],
@@ -23,24 +23,25 @@ let package = Package(
             name: "ForceSimulation",
             targets: ["ForceSimulation"]
         ),
-        
+
     ],
 
     dependencies: [
         // other dependencies
         .package(url: "https://github.com/apple/swift-docc-plugin", exact: "1.0.0"),
 
-        .package(url: "https://github.com/li3zhen1/WithSpecializedGeneric.git", exact: "0.1.4")
+        .package(url: "https://github.com/li3zhen1/WithSpecializedGeneric.git", exact: "0.1.4"),
     ],
 
     targets: [
-        
+
         .target(
             name: "NDTree",
-
             dependencies: ["WithSpecializedGeneric"],
-            path: "Sources/NDTree"
-            // , swiftSettings:[.unsafeFlags(["-whole-module-optimization", "-Ounchecked"])]
+            path: "Sources/NDTree",
+            swiftSettings: [
+                .unsafeFlags(["-cross-module-optimization"])
+            ]
         ),
 
         .testTarget(
@@ -50,12 +51,17 @@ let package = Package(
         .target(
             name: "ForceSimulation",
             dependencies: ["NDTree"],
-            path: "Sources/ForceSimulation"
-            // , swiftSettings:[.unsafeFlags(["-whole-module-optimization", "-Ounchecked"])]
+            path: "Sources/ForceSimulation",
+            swiftSettings: [
+                .unsafeFlags(["-cross-module-optimization"])
+            ]
         ),
 
         .testTarget(
             name: "ForceSimulationTests",
-            dependencies: ["ForceSimulation", "NDTree"]),
+            dependencies: ["ForceSimulation", "NDTree"],
+            swiftSettings: [
+                .unsafeFlags(["-cross-module-optimization"])
+            ]),
     ]
 )
