@@ -6,7 +6,7 @@
 //
 
 #if canImport(simd)
-import NDTree
+
 import simd
 
 struct MaxRadiusTreeDelegate2D<NodeID>: KDTreeDelegate where NodeID: Hashable {

@@ -1,7 +1,7 @@
 import XCTest
 import simd
 
-@testable import NDTree
+
 
 final class DummyQuadtreeDelegate: KDTreeDelegate {
     func didAddNode(_ node: Int, at position: SIMD2<Double>) {

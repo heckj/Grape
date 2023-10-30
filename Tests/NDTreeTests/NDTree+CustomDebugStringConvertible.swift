@@ -6,7 +6,7 @@
 //
 
 import simd
-@testable import NDTree
+
 
 extension VectorLike {
     var compactDebugString: String {

@@ -7,7 +7,7 @@
 
 import SwiftUI
 import simd
-import NDTree
+
 import ForceSimulation
 import CoreGraphics
 
