@@ -46,7 +46,10 @@ let package = Package(
 
         .testTarget(
             name: "NDTreeTests",
-            dependencies: ["NDTree"]),
+            dependencies: ["NDTree"],
+            swiftSettings: [
+                .unsafeFlags(["-cross-module-optimization"])
+            ]),
 
         .target(
             name: "ForceSimulation",

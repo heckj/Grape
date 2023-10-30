@@ -134,20 +134,9 @@ extension Simulation {
 
             }
         }
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
+
         /// # Utils for creating forces
-        
-        
+
         /// Create a center force that drives nodes towards the center.
         /// Center force is relatively fast, the complexity is `O(n)`,
         /// where `n` is the number of nodes.
@@ -162,7 +151,7 @@ extension Simulation {
             self.forces.append(f)
             return f
         }
-        
+
         /// Create a collide force that prevents nodes from overlapping.
         /// This is a very expensive force, the complexity is `O(n log(n))`,
         /// where `n` is the number of nodes.
@@ -186,8 +175,7 @@ extension Simulation {
             self.forces.append(f)
             return f
         }
-        
-        
+
         @discardableResult
         public func createManyBodyForce(
             strength: V.Scalar,
@@ -199,8 +187,7 @@ extension Simulation {
             self.forces.append(manyBodyForce)
             return manyBodyForce
         }
-        
-        
+
         /// Create a link force that represents links between nodes. It works like
         /// there is a spring between each pair of nodes.
         /// The complexity is `O(e)`, where `e` is the number of links.
@@ -245,17 +232,6 @@ extension Simulation {
             self.forces.append(linkForce)
             return linkForce
         }
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
 
         final public class CenterForce: ForceLike {
 
@@ -335,18 +311,49 @@ extension Simulation {
 
                     let clusterDistance: V.Scalar = V.Scalar(Int(0.00001))
 
-                    let tree = NDTree<V, MaxRadiusTreeDelegate<Int, V>>(
-                        box: coveringBox, clusterDistance: clusterDistance
-                    ) {
-                        return switch self.radius {
-                        case .constant(let m):
-                            MaxRadiusTreeDelegate<Int, V> { _ in m }
-                        case .varied(_):
-                            MaxRadiusTreeDelegate<Int, V> { index in
-                                self.calculatedRadius[index]
+                    let tree = #ReplaceWhenSpecializing(
+                        NDTree<V, MaxRadiusTreeDelegate<Int, V>>(
+                            box: coveringBox, clusterDistance: clusterDistance
+                        ) {
+                            return switch self.radius {
+                            case .constant(let m):
+                                MaxRadiusTreeDelegate<Int, V> { _ in m }
+                            case .varied(_):
+                                MaxRadiusTreeDelegate<Int, V> { index in
+                                    self.calculatedRadius[index]
+                                }
+                            }
+                        },
+                        lookupOn: [
+                            "Double2D": """
+                                Quadtree<MaxRadiusTreeDelegate2D<Int>>(
+                                    box: coveringBox, clusterDistance: clusterDistance
+                                ) {
+                                    return switch self.radius {
+                                    case .constant(let m):
+                                        MaxRadiusTreeDelegate2D<Int> { _ in m }
+                                    case .varied(_):
+                                        MaxRadiusTreeDelegate2D<Int> { index in
+                                            self.calculatedRadius[index]
+                                        }
+                                    }
+                                }
+                                """
+                                ], 
+                        fallback: """
+                        NDTree<V, MaxRadiusTreeDelegate<Int, V>>(
+                            box: coveringBox, clusterDistance: clusterDistance
+                        ) {
+                            return switch self.radius {
+                            case .constant(let m):
+                                MaxRadiusTreeDelegate<Int, V> { _ in m }
+                            case .varied(_):
+                                MaxRadiusTreeDelegate<Int, V> { index in
+                                    self.calculatedRadius[index]
+                                }
                             }
                         }
-                    }
+                        """)
 
                     for i in sim.nodePositions.indices {
                         tree.add(i, at: sim.nodePositions[i])
@@ -497,7 +504,37 @@ extension Simulation {
 
                 let coveringBox = NDBox<V>.cover(of: sim.nodePositions)  //try! getCoveringBox()
 
-                let tree = NDTree<V, MassQuadtreeDelegate<Int, V>>(
+                let tree = #ReplaceWhenSpecializing(
+                    NDTree<V, MassQuadtreeDelegate<Int, V>>(
+                    box: coveringBox, clusterDistance: 1e-5
+                ) {
+
+                    return switch self.mass {
+                    case .constant(let m):
+                        MassQuadtreeDelegate<Int, V> { _ in m }
+                    case .varied(_):
+                        MassQuadtreeDelegate<Int, V> { index in
+                            self.precalculatedMass[index]
+                        }
+                    }
+                }, lookupOn: [
+                    "Double2D": """
+                    Quadtree<MassQuadtreeDelegate2D<Int>>(
+                    box: coveringBox, clusterDistance: 1e-5
+                ) {
+
+                    return switch self.mass {
+                    case .constant(let m):
+                        MassQuadtreeDelegate2D<Int> { _ in m }
+                    case .varied(_):
+                        MassQuadtreeDelegate2D<Int> { index in
+                            self.precalculatedMass[index]
+                        }
+                    }
+                }
+                """
+                ], fallback: """
+                            NDTree<V, MassQuadtreeDelegate<Int, V>>(
                     box: coveringBox, clusterDistance: 1e-5
                 ) {
 
@@ -510,6 +547,7 @@ extension Simulation {
                         }
                     }
                 }
+                """)
 
                 for i in sim.nodePositions.indices {
                     tree.add(i, at: sim.nodePositions[i])
@@ -574,8 +612,6 @@ extension Simulation {
             }
 
         }
-        
-        
 
         final public class LinkForce: ForceLike {
 
